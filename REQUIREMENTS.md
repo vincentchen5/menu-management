@@ -1,4 +1,4 @@
-# menu-management
+# Menu_Management
 Popmenu SE Internship Assessment
 
 ## Requirements:
