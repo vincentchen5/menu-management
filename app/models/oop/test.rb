@@ -10,7 +10,7 @@ class TestClass < Test::Unit::TestCase
   # This test case verifies a menu item is initialized correctly
   def test_menu_item_init()
     # initialize
-    menuItem = MenuItem.new("Pizza", 200, 5)
+    menuItem = MenuItem.new("Pizza", 200, 5, "standalone")
 
     assert_equal("Pizza", menuItem.name)
     assert_equal(200, menuItem.calories)
@@ -21,29 +21,30 @@ class TestClass < Test::Unit::TestCase
   def test_menu_init()
     # initialize
     menu = Menu.new
-    assert_equal(0, menu.no_of_items)
+
+    assert_equal(0, menu.menu_items.length())
   end
 
   # This test case verifies a menu item is correctly added to the menu
   def test_menu_add_menu_item()
     # initialize
     menu = Menu.new
-    menuItem = MenuItem.new("Pasta", 500, 10)
+    menuItem = MenuItem.new("Pasta", 500, 10, "standalone")
 
     menu.addMenuItem(menuItem)
-    assert_equal(1, menu.no_of_items)
+    assert_equal(1, menu.menu_items.length())
   end
 
   # This test case verifies a duplicate menu item name isn't added to the menu
   def test_menu_add__menu_item_Duplicate_name() 
     # initialize
     menu = Menu.new
-    menuItem = MenuItem.new("Cheesecake", 150, 3)
+    menuItem = MenuItem.new("Cheesecake", 150, 3, "standalone")
 
     menu.addMenuItem(menuItem)
     menu.addMenuItem(menuItem)
     menu.addMenuItem(menuItem)
-    assert_equal(1, menu.no_of_items)
+    assert_equal(1, menu.menu_items.length())
   end
 
   # This test case verifies a restaurant is initialized correctly
@@ -82,13 +83,36 @@ class TestClass < Test::Unit::TestCase
   def test_diner_order()
     # initialize
     diner = Diner.new("Gon", 18)
+    menuItem = MenuItem.new("Shawarma", 100, 4, "standalone")
     menu = Menu.new
-    menuItem = MenuItem.new("Shawarma", 100, 4)
     menu.addMenuItem(menuItem) 
 
     restaurant = Restaurant.new("Halal Guy's", 10, "95 Eighth St NW", 5, menu) 
     restaurant.addMenu(menu)
-    diner.order(restaurant, menuItem)
-    assert_equal("Shawarma", diner.orders.last.name)
+    restaurant.order(diner, menuItem, nil)
+    assert_equal("Shawarma", diner.orders.last.menu_item.name)
+  end
+
+  # This test case verifies the salad order feature
+  def test_diner_order_salad()
+    # initialize
+    diner = Diner.new("Cristiano", 37)
+    menuItem1 = MenuItem.new("Salad", 50, 6, "standalone")
+    menu = Menu.new
+    menu.addMenuItem(menuItem1)
+    restaurant = Restaurant.new("Sweetgreen", 25, "1201 Peachtree St NE", 8, menu) 
+    restaurant.addMenu(menu)
+    
+    restaurant.order(diner, menuItem1, "Lemon and Honey")
+    assert_equal("Salad", diner.orders.last.menu_item.name)
+    assert_equal("standalone", menuItem1.type)
+    assert_equal("Lemon and Honey", diner.orders.last.dressing.last)
+
+    menuItem2 = MenuItem.new("Salad", 50, 6, "side")
+    menu.addMenuItem(menuItem2)
+    restaurant.order(diner, menuItem2, nil)
+    assert_equal("Salad", diner.orders.last.menu_item.name)
+    assert_equal("side", menuItem2.type)
+    assert_equal(nil, diner.orders.last.dressing.last)
   end
 end

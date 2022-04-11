@@ -13,8 +13,8 @@ class Diner
     @orders = Array.new
   end
 
-  # creates a new order
-  def order(restaurant, menuItem)
-    @orders << Order.new(menuItem.name, menuItem.price)
+  # saves user's order
+  def addOrder(restaurant, order)
+    @orders << order
   end
 end
