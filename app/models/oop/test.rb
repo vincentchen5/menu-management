@@ -89,7 +89,7 @@ class TestClass < Test::Unit::TestCase
 
     restaurant = Restaurant.new("Halal Guy's", 10, "95 Eighth St NW", 5, menu) 
     restaurant.addMenu(menu)
-    restaurant.order(diner, menuItem, nil)
+    restaurant.order(diner, menuItem, nil, nil)
     assert_equal("Shawarma", diner.orders.last.menu_item.name)
   end
 
@@ -98,21 +98,40 @@ class TestClass < Test::Unit::TestCase
     # initialize
     diner = Diner.new("Cristiano", 37)
     menuItem1 = MenuItem.new("Salad", 50, 6, "standalone")
+    dressing = MenuItem.new("Lemon and Honey", 15, 1, "dressing")
     menu = Menu.new
     menu.addMenuItem(menuItem1)
     restaurant = Restaurant.new("Sweetgreen", 25, "1201 Peachtree St NE", 8, menu) 
     restaurant.addMenu(menu)
     
-    restaurant.order(diner, menuItem1, "Lemon and Honey")
+    restaurant.order(diner, menuItem1, dressing, nil)
     assert_equal("Salad", diner.orders.last.menu_item.name)
     assert_equal("standalone", menuItem1.type)
-    assert_equal("Lemon and Honey", diner.orders.last.dressing.last)
+    assert_equal("Lemon and Honey", diner.orders.last.dressing.last.name)
 
     menuItem2 = MenuItem.new("Salad", 50, 6, "side")
     menu.addMenuItem(menuItem2)
-    restaurant.order(diner, menuItem2, nil)
+    restaurant.order(diner, menuItem2, nil, nil)
     assert_equal("Salad", diner.orders.last.menu_item.name)
     assert_equal("side", menuItem2.type)
-    assert_equal(nil, diner.orders.last.dressing.last)
+    assert_equal(0, diner.orders.last.dressing.length())
+  end
+
+  # This test case verifies the side of any dressing with any appetizer or entree feature
+  def test_diner_order_dressing_appetizer()
+    # initialize
+    diner = Diner.new("Messi", 34)
+    menuItem = MenuItem.new("Fries", 50, 6, "side")
+    appetizer = MenuItem.new("Sticky Baked Chicken Wings", 200, 5, "appetizer")
+    menu = Menu.new
+    menu.addMenuItem(menuItem)
+    restaurant = Restaurant.new("Waffle House", 20, "66 5th St NW", 5, menu) 
+    restaurant.addMenu(menu)
+
+    restaurant.order(diner, menuItem, nil, appetizer)
+    assert_equal("Fries", diner.orders.last.menu_item.name)
+    assert_equal("side", menuItem.type)
+    assert_equal(0, diner.orders.last.dressing.length())
+    assert_equal("Sticky Baked Chicken Wings", diner.orders.last.appetizerOrEntree.last.name) 
   end
 end

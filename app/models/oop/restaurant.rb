@@ -24,14 +24,22 @@ class Restaurant
   end
 
   # creates a new order
-  def order(diner, menuItem, dressing)
-    if menuItem.name == "Salad" && dressing != nil
-      order = Order.new(self, menuItem)
-      order.addDressing(dressing)
-      diner.addOrder(self, order)
+  def order(diner, menuItem, dressing, appetizerOrEntree)
+    order = Order.new(self, menuItem)
+    if menuItem.name == "Salad"
+      if dressing != nil && appetizerOrEntree != nil
+        order.addDressing(dressing)
+        order.addAppetizerOrEntree(appetizerOrEntree)
+      elsif dressing != nil && appetizerOrEntree == nil
+        order.addDressing(dressing)
+      else dressing == nil && appetizerOrEntree != nil
+        order.addAppetizerOrEntree(appetizerOrEntree) 
+      end
     else
-      order = Order.new(self, menuItem)
-      diner.addOrder(self, order)
+      if appetizerOrEntree != nil
+        order.addAppetizerOrEntree(appetizerOrEntree)
+      end
     end
+    diner.addOrder(self, order)
   end
 end
